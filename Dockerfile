@@ -20,4 +20,4 @@ ARG BUILD_HASH
 ENV BUILD_HASH=$BUILD_HASH
 
 EXPOSE 9999
-ENTRYPOINT ["/nginx-log-exporter/nginx-log-exporter"]
+ENTRYPOINT ["/nginx-log-exporter"]
