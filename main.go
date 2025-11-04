@@ -17,13 +17,14 @@ import (
 func main() {
 	var listenAddress, configFile string
 	var username, password string
-	var placeholderReplace bool
+	var placeholderReplace, skipNamespace bool
 
 	flag.StringVar(&listenAddress, `web.listen-address`, `:9999`, `Address to listen on for the web interface and API.`)
 	flag.StringVar(&configFile, `config.file`, `config.yml`, `Nginx log exporter configuration file name.`)
 	flag.StringVar(&username, `web.username`, `jogodo`, `Nginx log exporter username for basic auth.`)
 	flag.StringVar(&password, `web.password`, `jegedee`, `Nginx log exporter password for basic auth.`)
 	flag.BoolVar(&placeholderReplace, `placeholder.replace`, false, `Enable placeholder replacement when rewriting the request path.`)
+	flag.BoolVar(&skipNamespace, `skip.namespace`, false, `Skip adding namespace prefix to metric names.`)
 	flag.Parse()
 
 	cfg, err := config.LoadFile(configFile)
@@ -33,6 +34,7 @@ func main() {
 
 	var options config.Options
 	options.SetPlaceholderReplace(placeholderReplace)
+	options.SetSkipNamespace(skipNamespace)
 
 	for _, app := range cfg.App {
 		go collector.NewCollector(app, options).Run()

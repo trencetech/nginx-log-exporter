@@ -37,28 +37,33 @@ func NewCollector(cfg *config.AppConfig, opts config.Options) *Collector {
 
 	labels := append(exlables, dynamicLabels...)
 
+	namespace := cfg.Name
+	if opts.SkipNamespace() {
+		namespace = ""
+	}
+
 	return &Collector{
 		countTotal: prometheus.NewCounterVec(prometheus.CounterOpts{
-			Namespace: cfg.Name,
+			Namespace: namespace,
 			Name:      "http_response_count_total",
 			Help:      "Amount of processed HTTP requests",
 		}, labels),
 
 		bytesTotal: prometheus.NewCounterVec(prometheus.CounterOpts{
-			Namespace: cfg.Name,
+			Namespace: namespace,
 			Name:      "http_response_size_bytes",
 			Help:      "Total amount of transferred bytes",
 		}, labels),
 
 		upstreamSeconds: prometheus.NewHistogramVec(prometheus.HistogramOpts{
-			Namespace: cfg.Name,
+			Namespace: namespace,
 			Name:      "http_upstream_time_seconds",
 			Help:      "Time needed by upstream servers to handle requests",
 			Buckets:   cfg.HistogramBuckets,
 		}, labels),
 
 		responseSeconds: prometheus.NewHistogramVec(prometheus.HistogramOpts{
-			Namespace: cfg.Name,
+			Namespace: namespace,
 			Name:      "http_response_time_seconds",
 			Help:      "Time needed by NGINX to handle requests",
 			Buckets:   cfg.HistogramBuckets,
